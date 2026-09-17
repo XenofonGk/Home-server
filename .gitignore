@@ -1,0 +1,20 @@
+# Secrets. Never commit these.
+.env
+*.env
+!*.env.example
+secrets/
+.restic-password
+restic-password
+.last-backup-ok
+*.bak-*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Runtime
+logs/
+*.log

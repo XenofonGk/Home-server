@@ -1,0 +1,31 @@
+# Telegram <-> Ollama bridge.
+# Install: sudo cp systemd/telegram-ollama-bridge.service /etc/systemd/system/
+#          sudo systemctl daemon-reload
+#          sudo systemctl enable --now telegram-ollama-bridge
+[Unit]
+Description=Telegram to Ollama bridge
+After=network-online.target ollama.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=foe
+Group=foe
+WorkingDirectory=/home/foe/server
+EnvironmentFile=/home/foe/server/bridge/.env
+ExecStart=/usr/bin/python3 -m bridge.main
+Restart=on-failure
+RestartSec=10
+
+# It needs exactly two things: the loopback API and its own log file.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/foe/server/logs
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

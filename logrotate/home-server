@@ -1,0 +1,15 @@
+# Install: sudo cp logrotate/home-server /etc/logrotate.d/home-server
+# Verify:  sudo logrotate -d /etc/logrotate.d/home-server
+#
+# The bridge rotates its own log via RotatingFileHandler; this covers the
+# shell scripts' output and acts as a backstop.
+/home/foe/server/logs/*.log {
+    weekly
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 foe foe
+    copytruncate
+}

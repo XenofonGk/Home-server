@@ -1,0 +1,21 @@
+# Portainer - Docker management UI.
+# WARNING: the Docker socket below is root-equivalent access to this machine.
+# Claim the admin account the moment this comes up. An unclaimed Portainer
+# lets whoever finds it first set the password.
+services:
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+volumes:
+  portainer-data:

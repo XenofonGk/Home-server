@@ -1,0 +1,28 @@
+# n8n - automation platform.
+# n8n executes arbitrary code by design, so basic auth is on from the first
+# start, not added later. Credentials come from .env (gitignored).
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:?set in .env}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:?set in .env}
+      - N8N_HOST=10.0.0.46
+      - N8N_PORT=5678
+      - WEBHOOK_URL=http://10.0.0.46:5678/
+      - GENERIC_TIMEZONE=Europe/Athens
+      - N8N_DIAGNOSTICS_ENABLED=false
+    volumes:
+      - n8n-data:/home/node/.n8n
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+volumes:
+  n8n-data:
