@@ -7,6 +7,17 @@ until the current one verifies. Record each system-level change in
 Run everything as `foe`. Nothing here needs a root shell; the `sudo` calls
 are individual and named.
 
+## Before you start
+
+```bash
+./scripts/preflight.sh
+```
+
+Changes nothing. Checks RAM, disk, the SSH key, free ports, the USB stick and
+what's already installed, then tells you what will bite you. Exits non-zero if
+something would actually block the install. Clear the failures first — finding
+out in phase 2 is more expensive than finding out now.
+
 ---
 
 ## Phase 1 — Foundation
@@ -288,15 +299,17 @@ sudo tailscale up            # prints an auth URL; open it in your browser
 ## Final check
 
 ```bash
-ip addr | grep 'inet '                  # network unchanged
-sudo ufw status verbose
-sudo sshd -T | grep -E 'passwordauth|permitroot'
-ss -tlnp | grep 11434                   # loopback only
-docker ps --format 'table {{.Names}}\t{{.Status}}'
-docker stats --no-stream
-free -m
-systemctl is-enabled docker ollama telegram-ollama-bridge fail2ban
+./scripts/verify.sh
 ```
 
-Everything enabled, nothing unclaimed, total RAM under ~4.5GB, and both the
-down-alert and the restore verified by having actually watched them happen.
+Read-only. Confirms the network is still on DHCP, password auth is off, Ollama
+is on loopback only, UFW is up with 22 allowed, every service is enabled at
+boot, RAM is under the ceiling, and the backup is fresh. Exits non-zero on any
+failure, so it is also worth running from cron if you want.
+
+The two things it cannot check for you, because they happen on your phone:
+
+- a Uptime Kuma down-alert and its recovery alert actually arriving
+- `./scripts/restore-verify.sh` reporting a clean diff
+
+Those are the ones that matter most. Watch them happen at least once.

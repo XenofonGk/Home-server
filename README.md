@@ -111,9 +111,17 @@ verification step for each phase. The short version:
 git clone <this repo> /home/foe/server
 cd /home/foe/server
 
+./scripts/preflight.sh                   # read-only; check before changing anything
+
 cp bridge/.env.example bridge/.env       # fill in, then chmod 600
 cp services/n8n/.env.example services/n8n/.env
 ```
+
+`preflight.sh` reports what will block the install — RAM, disk, the SSH key,
+port conflicts, the USB stick. `verify.sh` is its counterpart for afterwards:
+it confirms the network is still on DHCP, Ollama is on loopback only, password
+auth is off, everything is enabled at boot, and the backup is fresh. Both are
+read-only and both exit non-zero on a real problem.
 
 ### Credentials you need
 
